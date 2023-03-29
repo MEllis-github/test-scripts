@@ -12,7 +12,9 @@ export MODEL_TYPE=${MODEL_TYPE:-"gpt2_medium"}
 
 # export PYTHONPATH=$PWD:$PYTHONPATH
 
-mkdir -p gemini_logs
+PYTORCH_PROFILE=${PYTORCH_PROFILE:-1}
+OUTPUT_DIR=${OUTPUT_DIR:-"gemini_logs"}
+mkdir -p ${OUTPUT_DIR}
 
 torchrun --standalone --nproc_per_node=${GPUNUM} ./train_gpt_demo.py \
 --tp_degree=${TPDEGREE} \
@@ -21,4 +23,6 @@ torchrun --standalone --nproc_per_node=${GPUNUM} ./train_gpt_demo.py \
 --placement=${PLACEMENT} \
 --shardinit=${USE_SHARD_INIT} \
 --distplan=${DISTPAN} \
-2>&1 | tee ./gemini_logs/${MODEL_TYPE}_${DISTPAN}_gpu_${GPUNUM}_bs_${BATCH_SIZE}_tp_${TPDEGREE}_${PLACEMENT}.log
+--pytorch_profile=${PYTORCH_PROFILE} \
+--output_dir=${OUTPUT_DIR} \
+2>&1 | tee ${OUTPUT_DIR}/${MODEL_TYPE}_${DISTPAN}_gpu_${GPUNUM}_bs_${BATCH_SIZE}_tp_${TPDEGREE}_${PLACEMENT}${USE_SHARD_INIT}.log
