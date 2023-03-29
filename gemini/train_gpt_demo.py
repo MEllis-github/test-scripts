@@ -6,7 +6,7 @@ import psutil
 import torch
 import torch.nn as nn
 from commons.model_zoo import model_builder
-from commons.utils import get_data, get_tflops
+from commons.utils import get_data, get_profile_context, get_tflops, get_time_stamp
 from packaging import version
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -255,7 +255,7 @@ def main():
     PROF_FLAG = args.pytorch_profile #False    # The flag of profiling, False by default
 
     output_dir = args.output_dir #TODO check validity...
-    
+
     disable_existing_loggers()
     colossalai.launch_from_torch(config={})
 
