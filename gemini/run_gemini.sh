@@ -28,4 +28,4 @@ torchrun --standalone --nproc_per_node=${GPUNUM} ./train_gpt_demo.py \
 --distplan=${DISTPAN} \
 --pytorch_profile=${PYTORCH_PROFILE} \
 --output_dir=${OUTPUT_DIR} \
-2>&1 | tee ${OUTPUT_DIR}/${MODEL_TYPE}_${DISTPAN}_gpu_${GPUNUM}_bs_${BATCH_SIZE}_tp_${TPDEGREE}_${PLACEMENT}${USE_SHARD_INIT}.log
+2>&1 | tee ${OUTPUT_DIR}/${MODEL_TYPE}_${DISTPAN}_nsteps${NTRAIN_STEPS}_gpu_${GPUNUM}_bs_${BATCH_SIZE}_tp_${TPDEGREE}_${PLACEMENT}${USE_SHARD_INIT}.log
