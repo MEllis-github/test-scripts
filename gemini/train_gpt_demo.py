@@ -382,7 +382,7 @@ def main():
             prof.step()
 
     tflops_list.sort()
-    median_index = ((NUM_STEPS - WARMUP_STEPS) >> 1) + WARMUP_STEPS
+    median_index = ((NUM_STEPS - WARMUP_STEPS) >> 1) #+ WARMUP_STEPS
     logger.info(f"Median TFLOPS is {tflops_list[median_index]:.3f}")
     torch.cuda.synchronize()
 
