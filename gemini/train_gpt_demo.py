@@ -325,7 +325,8 @@ def main():
     torch.cuda.synchronize()
     model.train()
     tflops_list = []
-    for n in range(NUM_STEPS):
+
+    def train_step():
         # we just use randomly generated data here
         input_ids, attn_mask = get_data(BATCH_SIZE, SEQ_LEN, VOCAB_SIZE)
         optimizer.zero_grad()
