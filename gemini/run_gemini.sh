@@ -2,6 +2,8 @@ set -x
 # distplan in ["colossalai", "zero1", "zero2", "torch_ddp", "torch_zero"]
 export DISTPAN=${DISTPAN:-"colossalai"}
 
+export NTRAIN_STEPS=${NTRAIN_STEPS:-10}
+
 # The following options only valid when DISTPAN="colossalai"
 export GPUNUM=${GPUNUM:-1}
 export TPDEGREE=${TPDEGREE:-1}
@@ -17,6 +19,7 @@ OUTPUT_DIR=${OUTPUT_DIR:-"gemini_logs"}
 mkdir -p ${OUTPUT_DIR}
 
 torchrun --standalone --nproc_per_node=${GPUNUM} ./train_gpt_demo.py \
+--num_train_steps=${NTRAIN_STEPS} \
 --tp_degree=${TPDEGREE} \
 --model_type=${MODEL_TYPE} \
 --batch_size=${BATCH_SIZE} \
