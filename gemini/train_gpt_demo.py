@@ -29,6 +29,12 @@ if version.parse(CAI_VERSION) > version.parse("0.1.10"):
 def parse_args():
     parser = colossalai.get_default_parser()
     parser.add_argument(
+        "--num_train_steps",
+        type=int,
+        default=10,
+        help="The number of timed training steps.",
+    )
+    parser.add_argument(
         "--distplan",
         type=str,
         default='colossalai',
@@ -248,7 +254,7 @@ def main():
     SEQ_LEN = 1024
     VOCAB_SIZE = 50257
 
-    NUM_STEPS = 10
+    NUM_STEPS = args.num_train_steps #10
     WARMUP_STEPS = 1
     assert WARMUP_STEPS < NUM_STEPS, "warmup steps should smaller than the total steps"
     assert (NUM_STEPS - WARMUP_STEPS) % 2 == 1, "the number of valid steps should be odd to take the median "
