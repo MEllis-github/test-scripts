@@ -1,4 +1,5 @@
 import os
+from sys import argv
 from functools import partial
 from time import time
 
@@ -245,6 +246,7 @@ def main():
 
     set_cpu_maximum_parallelism()
     args = parse_args()
+    print("PARSED ARGS:", args)
 
     if args.distplan not in ["colossalai", "torch_ddp", "torch_zero", "zero1", "zero2"]:
         raise TypeError(f"{args.distplan} is error")
@@ -388,4 +390,5 @@ def main():
 
 
 if __name__ == '__main__':
+    print("SYS ARGS:", argv)
     main()
