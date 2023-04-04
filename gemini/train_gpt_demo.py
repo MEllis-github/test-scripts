@@ -20,6 +20,7 @@ from colossalai.utils.model.colo_init_context import ColoInitContext
 
 CAI_VERSION = colossalai.__version__
 TORCH_VERSION = torch.__version__
+TRANSFORMERS_VERSION = transformers.__version__
 
 if version.parse(CAI_VERSION) > version.parse("0.1.10"):
     # These are added after 0.1.10
@@ -269,7 +270,7 @@ def main():
     colossalai.launch_from_torch(config={})
 
     logger = get_dist_logger()
-    logger.info(f"ColossalAI version {CAI_VERSION}, torch version {TORCH_VERSION}", ranks=[0])
+    logger.info(f"ColossalAI version {CAI_VERSION}, torch version {TORCH_VERSION}, transformers version {TRANSFORMERS_VERSION}", ranks=[0])
     logger.info(f"{args.model_type}, {args.distplan}, batch size {BATCH_SIZE}", ranks=[0]) #legacy
     logger.info(f"batch size {BATCH_SIZE}, sequence length {SEQ_LEN}, vocab size {VOCAB_SIZE}", ranks=[0])
 
