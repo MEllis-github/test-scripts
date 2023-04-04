@@ -75,6 +75,24 @@ def gpt2_60b(checkpoint=True):
 def gpt2_68b(checkpoint=True):
     return GPTLMModel(hidden_size=9216, num_layers=66, num_attention_heads=16, checkpoint=checkpoint)
 
+def gpt_175b(checkpoint=True):
+    from transformers import GPT2ForSequenceClassification
+    config = GPT2Config(
+            gradient_checkpointing=checkpoint,
+            hidden_size=12288,
+            intermediate_size=(12288 * 4),
+            num_attention_heads=96,
+            max_position_embeddings=1024,
+            num_hidden_layers=96,
+        )
+    model = GPT2ForSequenceClassification(config)
+    model.config.pad_token_id = model.config.eos_token_id
+    if checkpoint and version.parse(transformers.__version__) >= version.parse(
+            "4.11.0"
+    ):
+        model.gradient_checkpointing_enable()
+
+    return model
 
 def model_builder(model_size: str) -> callable:
     if model_size == "gpt2_medium":
@@ -99,6 +117,8 @@ def model_builder(model_size: str) -> callable:
         return gpt2_60b
     elif model_size == "gpt2_68b":
         return gpt2_68b
+    elif model_size == "gpt_175b":
+        return gpt_175b
     else:
         raise TypeError(f"model_builder {model_size}")
 
