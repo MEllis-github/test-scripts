@@ -247,7 +247,6 @@ def main():
 
     set_cpu_maximum_parallelism()
     args = parse_args()
-    print("PARSED ARGS:", args)
 
     if args.distplan not in ["colossalai", "torch_ddp", "torch_zero", "zero1", "zero2"]:
         raise TypeError(f"{args.distplan} is error")
@@ -270,6 +269,7 @@ def main():
 
     logger = get_dist_logger()
     logger.info(f"ColossalAI version {CAI_VERSION}, torch version {TORCH_VERSION}", ranks=[0])
+    logger.info(f"parsed args: {args}, ranks=[0])
     logger.info(f"{args.model_type}, {args.distplan}, batch size {BATCH_SIZE}", ranks=[0]) #legacy
     logger.info(f"batch size {BATCH_SIZE}, sequence length {SEQ_LEN}, vocab size {VOCAB_SIZE}", ranks=[0])
 
@@ -393,5 +393,4 @@ def main():
 
 
 if __name__ == '__main__':
-    print("SYS ARGS:", argv)
     main()
