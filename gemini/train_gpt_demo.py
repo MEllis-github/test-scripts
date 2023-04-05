@@ -269,7 +269,7 @@ def main():
 
     logger = get_dist_logger()
     logger.info(f"ColossalAI version {CAI_VERSION}, torch version {TORCH_VERSION}", ranks=[0])
-    logger.info(f"parsed args: {args}, ranks=[0])
+    logger.info(f"parsed args: {args}", ranks=[0])
     logger.info(f"{args.model_type}, {args.distplan}, batch size {BATCH_SIZE}", ranks=[0]) #legacy
     logger.info(f"batch size {BATCH_SIZE}, sequence length {SEQ_LEN}, vocab size {VOCAB_SIZE}", ranks=[0])
 
