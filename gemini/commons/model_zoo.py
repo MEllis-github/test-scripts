@@ -78,7 +78,6 @@ def gpt2_68b(checkpoint=True):
 def gpt_175b(checkpoint=True):
     from transformers import GPT2ForSequenceClassification
     config = GPT2Config(
-            gradient_checkpointing=checkpoint,
             hidden_size=12288,
             intermediate_size=(12288 * 4),
             num_attention_heads=96,
