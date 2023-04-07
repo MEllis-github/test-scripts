@@ -327,7 +327,7 @@ def main():
     numel = get_model_size(model)
     logger.info(f"the size of testing model size is {model_size_formatter(numel)}.")
     logger.info(get_mem_info(prefix='After init model, '), ranks=[0])
-    print(model)
+    if os.environ.get('RANK', '-1') == '0': print(model)
 
     # Tflops_per_GPU = global_batch * global_numel * seq_len * 8 / #gpu
     # = (batch_per_DP_group * dp_degree) * (numel * tp_degree) * seq_len * 8 / (tp_degree * dp_degree)
