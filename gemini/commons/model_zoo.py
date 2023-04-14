@@ -89,7 +89,7 @@ def gpt_175b(checkpoint=True):
     model.config.pad_token_id = model.config.eos_token_id
     if checkpoint and version.parse(transformers.__version__) >= version.parse(
             "4.11.0"
-    )
+    ):
         model.gradient_checkpointing_enable()
 
     return model
