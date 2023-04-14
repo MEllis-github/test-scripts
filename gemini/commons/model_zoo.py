@@ -1,4 +1,5 @@
 from torch import nn
+import transformers
 from transformers import GPT2Config, GPT2LMHeadModel
 from packaging import version
 
