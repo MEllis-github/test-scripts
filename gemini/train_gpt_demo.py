@@ -85,6 +85,23 @@ def parse_args():
         default="",
         help="location to write output files e.g. pytorch profiles if --pytorch_profile=true"
     )
+    # https://colossalai.org/docs/features/nvme_offload
+    # https://github.com/hpcaitech/ColossalAI/blob/main/colossalai/nn/optimizer/hybrid_adam.py
+    # nvme_offload_fraction (float, optional): Fraction of optimizer states to be offloaded to NVMe. Defaults to 0.0.
+    # nvme_offload_dir (Optional[str], optional): Directory to save NVMe offload files.
+    #     If it's ``None``, a random temporary directory will be used. Defaults to None.
+    parser.add_argument(
+        "--nvme_offload_fraction",
+        type=float,
+        default=0.0,
+        help="Fraction of optimizer states to be offloaded to NVMe. Defaults to 0.0."
+    )
+    parser.add_argument(
+        "--nvme_offload_dir",
+        type=str,
+        default=None,
+        help="Directory to save NVMe offload files. Defaults to None."
+    )
     args = parser.parse_args()
     return args
 
@@ -200,7 +217,7 @@ def tensor_parallelize(model: torch.nn.Module, pg: ProcessGroup):
 
 
 # Gemini + ZeRO DDP
-def build_gemini(model: torch.nn.Module, pg: ProcessGroup, placement_policy: str = "auto"):
+def build_gemini(model: torch.nn.Module, pg: ProcessGroup, args, placement_policy: str = "auto"):
     fp16_init_scale = 2**5
     gpu_margin_mem_ratio_for_auto = 0
 
@@ -218,7 +235,9 @@ def build_gemini(model: torch.nn.Module, pg: ProcessGroup, placement_policy: str
         optimizer = GeminiAdamOptimizer(model,
                                         lr=1e-3,
                                         initial_scale=fp16_init_scale,
-                                        gpu_margin_mem_ratio=gpu_margin_mem_ratio_for_auto)
+                                        gpu_margin_mem_ratio=gpu_margin_mem_ratio_for_auto,
+                                        nvme_offload_fraction=args.nvme_offload_fraction,
+                                        nvme_offload_dir=args.nvme_offload_dir)
     elif version.parse("0.1.9") <= version.parse(CAI_VERSION) <= version.parse("0.1.10"):
         from colossalai.gemini import ChunkManager, GeminiManager
         from colossalai.nn.optimizer import HybridAdam
@@ -230,7 +249,9 @@ def build_gemini(model: torch.nn.Module, pg: ProcessGroup, placement_policy: str
                                      init_device=GeminiManager.get_default_device(placement_policy))
         gemini_manager = GeminiManager(placement_policy, chunk_manager)
         model = ZeroDDP(model, gemini_manager)
-        optimizer = HybridAdam(model.parameters(), lr=1e-3)
+        optimizer = HybridAdam(model.parameters(), lr=1e-3,
+            nvme_offload_fraction=args.nvme_offload_fraction,
+            nvme_offload_dir=args.nvme_offload_dir)
         optimizer = ZeroOptimizer(optimizer,
                                   model,
                                   initial_scale=fp16_init_scale,
@@ -301,7 +322,7 @@ def main():
 
         # build a Gemini model and a highly optimized cpu optimizer
         # Gemini + ZeRO DP, Note it must be used after TP
-        model, optimizer = build_gemini(model, tp_pg, args.placement)
+        model, optimizer = build_gemini(model, tp_pg, args, args.placement)
 
         logger.info(get_mem_info(prefix='After init optim, '), ranks=[0])
     else:
