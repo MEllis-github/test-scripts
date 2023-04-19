@@ -11,6 +11,8 @@ export PLACEMENT=${PLACEMENT:-"cpu"}
 export USE_SHARD_INIT=${USE_SHARD_INIT:-False}
 export BATCH_SIZE=${BATCH_SIZE:-16}
 export MODEL_TYPE=${MODEL_TYPE:-"gpt2_medium"}
+export NVME_OFFLOAD_FRACTION=${NVME_OFFLOAD_FRACTION:-"0.0"}
+export NVME_OFFLOAD_DIR=${NVME_OFFLOAD_DIR:-"./"}
 
 # export PYTHONPATH=$PWD:$PYTHONPATH
 
@@ -28,4 +30,6 @@ torchrun --standalone --nproc_per_node=${GPUNUM} ./train_gpt_demo.py \
 --distplan=${DISTPLAN} \
 --pytorch_profile=${PYTORCH_PROFILE} \
 --output_dir=${OUTPUT_DIR} \
-2>&1 | tee ${OUTPUT_DIR}/${MODEL_TYPE}_${DISTPLAN}_nsteps${NTRAIN_STEPS}_gpu_${GPUNUM}_bs_${BATCH_SIZE}_tp_${TPDEGREE}_${PLACEMENT}${USE_SHARD_INIT}.log
+--nvme_offload_fraction=${NVME_OFFLOAD_FRAC} \
+--nvme_offload_dir=${NVME_OFFLOAD_DIR} \
+2>&1 | tee ${OUTPUT_DIR}/${MODEL_TYPE}_${DISTPLAN}_nsteps${NTRAIN_STEPS}_gpu_${GPUNUM}_bs_${BATCH_SIZE}_tp_${TPDEGREE}_nvme_${NVME_OFFLOAD_FRAC}_${PLACEMENT}${USE_SHARD_INIT}.log
